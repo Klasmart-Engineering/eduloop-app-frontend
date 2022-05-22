@@ -15,6 +15,8 @@ class QuizProviderModel extends ChangeNotifier {
   final Map<int, QuestionModel?> questions = {};
 
   late SessionModel session;
+  // Purely used for first load with future builder
+  late Future<QuizStateModel?> initialState;
   QuizStateModel? state;
 
   QuizProviderModel() {
@@ -28,9 +30,9 @@ class QuizProviderModel extends ChangeNotifier {
       session = value;
     });
 
-    QuizHelper.getQuizFromStorage().then((value) {
+    initialState = QuizHelper.getQuizFromStorage().then((value) {
       if (value == null) {
-        return;
+        throw Exception('Quiz state not found');
       }
 
       updateQuizState(value);
@@ -43,9 +45,9 @@ class QuizProviderModel extends ChangeNotifier {
     QuizHelper.updateQuizInStorage(quizState);
   }
 
-  bool isQuizComplete() {
-    return totalQuestions == currentQuestionNumber;
-  }
+  // bool isQuizComplete() {
+  //   return totalQuestions == currentQuestionNumber;
+  // }
 
   Future<QuizStateModel?> validateQuestionAnswer(
       int answerIndex, QuestionStatus status) async {

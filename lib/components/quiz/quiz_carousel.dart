@@ -2,9 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:edu_app/components/quiz/question_view.dart';
 import 'package:edu_app/models/question.dart';
 import 'package:edu_app/models/question_status.dart';
+import 'package:edu_app/models/quiz.dart';
 import 'package:edu_app/providers/quiz_provider.dart';
 import 'package:edu_app/screens/quiz/results.dart';
-import 'package:edu_app/utils/question_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,10 +44,10 @@ class QuizCarouselState extends State<QuizCarousel> {
   void nextPage() {
     QuizProviderModel quizProvider =
         Provider.of<QuizProviderModel>(context, listen: false);
-    if (quizProvider.isQuizComplete()) {
-      goToResultsScreen();
-      return;
-    }
+    // if (quizProvider.isQuizComplete()) {
+    //   goToResultsScreen();
+    //   return;
+    // }
 
     //quizProvider.incrementQuestionNumber();
     buttonCarouselController.nextPage();
@@ -98,27 +98,31 @@ class QuizCarouselState extends State<QuizCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    QuizStateModel? state = Provider.of<QuizProviderModel>(context).state;
+
+    if (state == null) {
+      return const Text('no state');
+    }
+
     return Column(children: [
       CarouselSlider.builder(
         carouselController: buttonCarouselController,
         options: CarouselOptions(
             viewportFraction: 1,
             enlargeCenterPage: true,
-            initialPage: Provider.of<QuizProviderModel>(context, listen: false)
-                .state
-                .currentQuestionNumber,
+            initialPage: state.currentQuestionNumber,
             aspectRatio: 1 / 1.4,
             enableInfiniteScroll: false),
-        itemCount: Provider.of<QuizProviderModel>(context, listen: false)
-            .totalQuestions,
+        itemCount: state.totalNumberOfQuestions,
         itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
           QuizProviderModel questionProvider =
-              Provider.of<QuizProviderModel>(context, listen: false);
+              Provider.of<QuizProviderModel>(context);
           bool questionExists =
               questionProvider.questions.containsKey(pageViewIndex);
 
           print(questionProvider.questions);
-          print('current question ${questionProvider.currentQuestionNumber}');
+          print(
+              'current question ${questionProvider.state?.currentQuestionNumber}');
           print('index: ${itemIndex}');
           print('page index: ${pageViewIndex}');
           QuestionModel? currentQuestion =
