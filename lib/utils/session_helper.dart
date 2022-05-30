@@ -7,25 +7,32 @@ import 'package:edu_app/utils/local_storage_helper.dart';
 import 'package:edu_app/constants/storage_keys.dart';
 
 class SessionHelper {
-  static Future<SessionModel> startSession(String userId) async {
+  static Future<SessionResponse> startSession(String userId) async {
     SessionResponse response = await EduloopApi.startSession(userId);
 
     String sessionJson = jsonEncode(response.session);
-    String quizJson = jsonEncode(response.quiz);
-    LocalStorageHelper.store(keyCurrentSession, sessionJson);
-    LocalStorageHelper.store(keyQuiz, quizJson);
 
-    return response.session;
+    LocalStorageHelper.store(keyCurrentSession, sessionJson);
+    return response;
   }
 
-  static Future<SessionModel?> getSessionFromStorage() async {
+  static Future<SessionModel> getSessionFromStorage() async {
     String? sessionValue = await LocalStorageHelper.get(keyCurrentSession);
 
     if (sessionValue == null) {
-      return null;
+      throw Exception('No session in storage');
     }
+
+    print('session val ${sessionValue}');
 
     dynamic sessionJson = jsonDecode(sessionValue);
     return SessionModel.fromJson(sessionJson);
+  }
+
+  // A combination of both functions, this can be used to refresh the session from the server
+  static Future<SessionResponse> refetchSession() async {
+    SessionModel session = await getSessionFromStorage();
+
+    return startSession(session.userId);
   }
 }

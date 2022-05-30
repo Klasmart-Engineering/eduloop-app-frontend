@@ -25,6 +25,8 @@ class QuestionModel {
       required this.status});
 
   factory QuestionModel.fromApiJson(Map<String, dynamic> json) {
+    final int? answerIndex =
+        json['answer_idx'] != null ? int.parse(json['answer_idx']) : null;
     Iterable answerListJson = jsonDecode(json['answers']);
     List answerList = answerListJson.toList();
     Iterable<AnswerModel> answerMap = answerList.asMap().entries.map((entry) {
@@ -39,7 +41,7 @@ class QuestionModel {
         assetUrl: json['questionAssetUrl'],
         status: json['status'].toString().questionStatus,
         answers: answerMap.toList(),
-        chosenAnswerIndex: json['answer_idx']);
+        chosenAnswerIndex: answerIndex);
   }
 
   factory QuestionModel.fromJson(Map<String, dynamic> json) {

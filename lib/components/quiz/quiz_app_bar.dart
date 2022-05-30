@@ -1,51 +1,62 @@
 import 'package:edu_app/components/common/question_progress_indicator.dart';
-import 'package:edu_app/models/quiz.dart';
-import 'package:edu_app/providers/quiz_provider.dart';
+import 'package:edu_app/providers/riverpod/quiz_data.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class QuizAppBar extends StatelessWidget {
+class QuizAppBar extends HookConsumerWidget {
   const QuizAppBar({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<QuizProviderModel>(builder: (context, quiz, child) {
-      if (quiz.state != null) {
-        return const CircularProgressIndicator();
-      }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final quizListener = ref.watch(quizDataProvider);
 
-      return Row(
-        children: [
-          QuestionProgressIndicator(
-            currentQuestion: quiz.state?.currentQuestionNumber ?? 0,
-            totalQuestions: quiz.state?.totalNumberOfQuestions ?? 10,
-          ),
-          Padding(
-              padding: const EdgeInsets.all(10),
-              child: OutlinedButton.icon(
-                  label: Text(
-                      quiz.state != null
-                          ? quiz.state!.earnedScore.toString()
-                          : '0',
-                      style: const TextStyle(color: Colors.white)),
-                  icon: const Icon(
-                    Icons.star,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => {},
-                  style: ButtonStyle(
-                      textStyle: MaterialStateProperty.all(
-                          const TextStyle(fontWeight: FontWeight.bold)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(36.0),
-                      )),
-                      side: MaterialStateProperty.all(const BorderSide(
-                          color: Colors.white,
-                          width: 1.0,
-                          style: BorderStyle.solid)))))
-        ],
-      );
-    });
+    if (quizListener is AsyncLoading) {
+      return const Text('loading');
+    }
+
+    final data = quizListener.value;
+
+    if (data == null) {
+      return const Text('no data');
+    }
+
+    return Padding(
+        padding:
+            const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(width: 100),
+            Flexible(
+                child: Center(
+                    child: SizedBox(
+              child: QuestionProgressIndicator(
+                currentQuestion: data.quiz.currentQuestionNumber,
+                totalQuestions: data.quiz.totalNumberOfQuestions,
+              ),
+              height: 50,
+              width: 50,
+            ))),
+            OutlinedButton.icon(
+                label: Text(data.quiz.earnedScore.toString(),
+                    style: const TextStyle(color: Colors.white)),
+                icon: const Icon(
+                  Icons.star,
+                  color: Colors.white,
+                ),
+                onPressed: () => {},
+                style: ButtonStyle(
+                    textStyle: MaterialStateProperty.all(
+                        const TextStyle(fontWeight: FontWeight.bold)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(36.0),
+                    )),
+                    side: MaterialStateProperty.all(const BorderSide(
+                        color: Colors.white,
+                        width: 1.0,
+                        style: BorderStyle.solid))))
+          ],
+        ));
   }
 }

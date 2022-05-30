@@ -1,28 +1,29 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:edu_app/components/common/question_progress_indicator.dart';
 import 'package:edu_app/components/quiz/question_view.dart';
+import 'package:edu_app/components/quiz/quiz_carousel_nav_buttons.dart';
 import 'package:edu_app/models/question.dart';
 import 'package:edu_app/models/question_status.dart';
-import 'package:edu_app/models/quiz.dart';
-import 'package:edu_app/providers/quiz_provider.dart';
+import 'package:edu_app/providers/riverpod/quiz_data.dart';
 import 'package:edu_app/screens/quiz/results.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
-import 'quiz_carousel_nav_buttons.dart';
+class QuizCarousel extends StatefulHookConsumerWidget {
+  const QuizCarousel(
+      {required this.initialQuestionNumber,
+      required this.totalNumberOfQuestions,
+      Key? key})
+      : super(key: key);
 
-// Define a custom Form widget.
-class QuizCarousel extends StatefulWidget {
-  const QuizCarousel({Key? key}) : super(key: key);
+  final int initialQuestionNumber;
+  final int totalNumberOfQuestions;
 
   @override
-  QuizCarouselState createState() {
-    return QuizCarouselState();
-  }
+  QuizCarouselState createState() => QuizCarouselState();
 }
 
-// Define a corresponding State class.
-// This class holds data related to the form.
-class QuizCarouselState extends State<QuizCarousel> {
+class QuizCarouselState extends ConsumerState<QuizCarousel> {
   CarouselController buttonCarouselController = CarouselController();
 
   @override
@@ -30,32 +31,24 @@ class QuizCarouselState extends State<QuizCarousel> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   void previousPage() {
-    // Provider.of<QuizProviderModel>(context, listen: false)
-    //     .decrementQuestionNumber();
-    buttonCarouselController.previousPage();
+    buttonCarouselController.previousPage(
+        duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
-  void nextPage() {
-    QuizProviderModel quizProvider =
-        Provider.of<QuizProviderModel>(context, listen: false);
-    // if (quizProvider.isQuizComplete()) {
-    //   goToResultsScreen();
-    //   return;
-    // }
+  Future<void> nextPage() async {
+    final state = await ref.read(quizDataProvider.future);
 
-    //quizProvider.incrementQuestionNumber();
-    buttonCarouselController.nextPage();
+    if (!state.quiz.hasNextQuestion) {
+      goToResultsScreen();
+      return;
+    }
+
+    buttonCarouselController.nextPage(
+        duration: const Duration(milliseconds: 300), curve: Curves.linear);
   }
 
   void onCorrectAnswer() {
-    //Provider.of<QuizProviderModel>(context, listen: false).incrementScore();
-
     ///celebrate good times
     Future.delayed(const Duration(milliseconds: 1000), () {
       nextPage();
@@ -68,28 +61,29 @@ class QuizCarouselState extends State<QuizCarousel> {
     });
   }
 
-  void onAnswerSelection(int answerIndex, bool isCorrect) {
-    QuizProviderModel quizProvider =
-        Provider.of<QuizProviderModel>(context, listen: false);
-
+  void onAnswerSelection(int answerIndex, bool isCorrect) async {
     QuestionStatus status =
         isCorrect ? QuestionStatus.successful : QuestionStatus.failed;
-    quizProvider.validateQuestionAnswer(answerIndex, status).then((newState) {
-      if (isCorrect) {
-        onCorrectAnswer();
-      } else {
-        onWrongAnswer();
-      }
-    });
+
+    await ref
+        .read(quizDataProvider.notifier)
+        .validateQuestionAnswer(answerIndex, status);
+
+    if (isCorrect) {
+      onCorrectAnswer();
+    } else {
+      onWrongAnswer();
+    }
   }
 
-  void onSkip() {
-    QuizProviderModel quizProvider =
-        Provider.of<QuizProviderModel>(context, listen: false);
+  Future<void> goToPreviousQuestion() async {
+    await ref.read(quizDataProvider.notifier).goToPreviousQuestion();
+    previousPage();
+  }
 
-    quizProvider.skipQuestion().then((newState) {
-      nextPage();
-    });
+  Future<void> onSkip() async {
+    await ref.read(quizDataProvider.notifier).skipQuestion();
+    nextPage();
   }
 
   void goToResultsScreen() {
@@ -98,11 +92,8 @@ class QuizCarouselState extends State<QuizCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    QuizStateModel? state = Provider.of<QuizProviderModel>(context).state;
-
-    if (state == null) {
-      return const Text('no state');
-    }
+    print('CAROUSEL initial: ${widget.initialQuestionNumber}');
+    print('CAROUSEL max: ${widget.totalNumberOfQuestions}');
 
     return Column(children: [
       CarouselSlider.builder(
@@ -110,24 +101,34 @@ class QuizCarouselState extends State<QuizCarousel> {
         options: CarouselOptions(
             viewportFraction: 1,
             enlargeCenterPage: true,
-            initialPage: state.currentQuestionNumber,
+            initialPage: widget.initialQuestionNumber,
             aspectRatio: 1 / 1.4,
             enableInfiniteScroll: false),
-        itemCount: state.totalNumberOfQuestions,
+        itemCount: widget.totalNumberOfQuestions,
         itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
-          QuizProviderModel questionProvider =
-              Provider.of<QuizProviderModel>(context);
-          bool questionExists =
-              questionProvider.questions.containsKey(pageViewIndex);
+          final quizListener = ref.watch(quizDataProvider);
 
-          print(questionProvider.questions);
-          print(
-              'current question ${questionProvider.state?.currentQuestionNumber}');
+          if (quizListener is AsyncLoading) {
+            return const Text('loading');
+          }
+
+          final data = quizListener.value;
+
+          if (data == null) {
+            return const Text('no data');
+          }
+
+          print("render new page");
+          bool questionExists = data.questions.containsKey(pageViewIndex);
+          //bool questionExists = false;
+          print('after q exists');
+          // print('initial question ${data.initialQuestionNumber}');
+          // print('current question ${data.quiz.currentQuestionNumber}');
           print('index: ${itemIndex}');
           print('page index: ${pageViewIndex}');
           QuestionModel? currentQuestion =
-              questionExists ? questionProvider.questions[pageViewIndex] : null;
-
+              questionExists ? data.questions[pageViewIndex] : null;
+          //QuestionModel? currentQuestion = null;
           if (currentQuestion == null) {
             return const CircularProgressIndicator();
           }
@@ -144,7 +145,7 @@ class QuizCarouselState extends State<QuizCarousel> {
       ),
       QuizCarouselNavigationButtons(
         nextPageTapHandler: onSkip,
-        previousPageTapHandler: previousPage,
+        previousPageTapHandler: goToPreviousQuestion,
       )
     ]);
   }

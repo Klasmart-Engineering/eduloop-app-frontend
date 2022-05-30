@@ -11,10 +11,11 @@ import 'package:edu_app/screens/introduction.dart';
 import 'package:edu_app/screens/user/login.dart';
 import 'package:edu_app/screens/user/sign_up.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 Future main() async {
   //await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

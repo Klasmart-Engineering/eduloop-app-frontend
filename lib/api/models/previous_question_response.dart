@@ -4,14 +4,13 @@ import 'package:edu_app/models/session.dart';
 import 'package:flutter/material.dart';
 
 class PreviousQuestionResponse {
-  final bool noPreviousQuestion;
+  final QuizStateModel quiz;
 
-  PreviousQuestionResponse({required this.noPreviousQuestion});
+  PreviousQuestionResponse({required this.quiz});
 
-  factory PreviousQuestionResponse.fromApiJson(
-      Map<String, dynamic> parsedJson) {
+  factory PreviousQuestionResponse.fromApiJson(Map<String, dynamic> json) {
     return PreviousQuestionResponse(
-      noPreviousQuestion: parsedJson['no_previous_question'],
+      quiz: QuizStateModel.fromApiJson(json),
     );
   }
 }

@@ -42,6 +42,7 @@ class _QuestionProgressIndicatorState extends State<QuestionProgressIndicator>
     return CircularProgressIndicator(
       value: controller.value,
       backgroundColor: Colors.amber,
+      strokeWidth: 7,
       semanticsLabel: 'Linear progress indicator',
     );
   }

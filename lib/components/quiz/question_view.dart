@@ -36,7 +36,6 @@ class QuestionViewState extends State<QuestionView> {
   Widget build(BuildContext context) {
     return Container(
         width: MediaQuery.of(context).size.width,
-        margin: const EdgeInsets.symmetric(horizontal: 5.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -45,9 +44,13 @@ class QuestionViewState extends State<QuestionView> {
             ),
             Container(
               width: MediaQuery.of(context).size.width - 20,
-              height: 300,
-              margin: const EdgeInsets.symmetric(horizontal: 3.0),
+              height: 250,
+              margin: const EdgeInsets.only(top: 5, bottom: 5),
               decoration: const BoxDecoration(color: Colors.orange),
+              child: Image(
+                fit: BoxFit.fill,
+                image: NetworkImage(widget.question.assetUrl),
+              ),
             ),
             Flexible(
                 flex: 1,
