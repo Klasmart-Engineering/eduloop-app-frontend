@@ -1,0 +1,1 @@
+flutter build web --base-href "/build/web/" --release --web-renderer html
