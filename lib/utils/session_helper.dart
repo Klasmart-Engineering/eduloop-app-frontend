@@ -23,8 +23,6 @@ class SessionHelper {
       throw Exception('No session in storage');
     }
 
-    print('session val ${sessionValue}');
-
     dynamic sessionJson = jsonDecode(sessionValue);
     return SessionModel.fromJson(sessionJson);
   }

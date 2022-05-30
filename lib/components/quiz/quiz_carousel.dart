@@ -92,9 +92,6 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    print('CAROUSEL initial: ${widget.initialQuestionNumber}');
-    print('CAROUSEL max: ${widget.totalNumberOfQuestions}');
-
     return Column(children: [
       CarouselSlider.builder(
         carouselController: buttonCarouselController,
@@ -118,17 +115,10 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
             return const Text('no data');
           }
 
-          print("render new page");
           bool questionExists = data.questions.containsKey(pageViewIndex);
-          //bool questionExists = false;
-          print('after q exists');
-          // print('initial question ${data.initialQuestionNumber}');
-          // print('current question ${data.quiz.currentQuestionNumber}');
-          print('index: ${itemIndex}');
-          print('page index: ${pageViewIndex}');
           QuestionModel? currentQuestion =
               questionExists ? data.questions[pageViewIndex] : null;
-          //QuestionModel? currentQuestion = null;
+
           if (currentQuestion == null) {
             return const CircularProgressIndicator();
           }

@@ -15,8 +15,6 @@ class QuizScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ref.watch(quizDataProvider).when(
         data: (QuizData quizData) {
-          print(quizData.questions);
-
           return Scaffold(
               body: Column(children: [
             const QuizAppBar(),
