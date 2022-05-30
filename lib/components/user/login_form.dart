@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:edu_app/models/user.dart';
 import 'package:edu_app/screens/introduction.dart';
+import 'package:edu_app/screens/user/sign_up.dart';
 import 'package:edu_app/utils/session_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_app/utils/user_helper.dart';
@@ -78,20 +82,39 @@ class LoginFormState extends State<LoginForm> {
                     },
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Validate returns true if the form is valid, or false otherwise.
-                        if (_formKey.currentState!.validate()) {
-                          SessionHelper.startSession(selectedUserId)
-                              .then((value) {
-                            Navigator.pushNamed(
-                                context, '/' + IntroductionScreen.routeName);
-                          });
-                        }
-                      },
-                      child: const Text('Submit'),
-                    ),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: TextButton(
+                        child: const Text('Add a new user',
+                            style: TextStyle(
+                              decoration: TextDecoration.underline,
+                            )),
+                        onPressed: () {
+                          Navigator.pushNamed(
+                              context, '/' + SignUpScreen.routeName);
+                        },
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    child: SizedBox(
+                        width: double.maxFinite,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 25))),
+                          onPressed: () {
+                            // Validate returns true if the form is valid, or false otherwise.
+                            if (_formKey.currentState!.validate()) {
+                              SessionHelper.startSession(selectedUserId)
+                                  .then((value) {
+                                Navigator.pushNamed(context,
+                                    '/' + IntroductionScreen.routeName);
+                              });
+                            }
+                          },
+                          child: const Text('Submit',
+                              style: TextStyle(fontSize: 20)),
+                        )),
                   ),
                 ],
               ),

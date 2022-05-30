@@ -56,13 +56,13 @@ class QuestionViewState extends State<QuestionView> {
                 flex: 1,
                 fit: FlexFit.tight,
                 child: Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   child: Column(children: [
                     Text(
                       widget.question.type,
                       style: const TextStyle(
                         fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(
@@ -72,7 +72,7 @@ class QuestionViewState extends State<QuestionView> {
                       widget.question.title,
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w700,
                         color: Colors.black.withOpacity(0.8),
                       ),
                     ),

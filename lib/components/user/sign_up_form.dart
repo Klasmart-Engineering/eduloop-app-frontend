@@ -59,35 +59,41 @@ class SignUpFormState extends State<SignUpForm> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   const SnackBar(content: Text('Processing Data:')),
-                  // );
+            child: SizedBox(
+                width: double.maxFinite,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 25))),
+                  onPressed: () async {
+                    // Validate returns true if the form is valid, or false otherwise.
+                    if (_formKey.currentState!.validate()) {
+                      // If the form is valid, display a snackbar. In the real world,
+                      // you'd often call a server or save the information in a database.
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(content: Text('Processing Data:')),
+                      // );
 
-                  User newUser =
-                      await UserHelper.addNewUser(_nicknameController.text);
+                      User newUser =
+                          await UserHelper.addNewUser(_nicknameController.text);
 
-                  SessionHelper.startSession(newUser.id).then((value) {
-                    // ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      SessionHelper.startSession(newUser.id).then((value) {
+                        // ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //   SnackBar(
-                    //       backgroundColor: Colors.green,
-                    //       content: Text('Success' + newUser.id)),
-                    // );
+                        // ScaffoldMessenger.of(context).showSnackBar(
+                        //   SnackBar(
+                        //       backgroundColor: Colors.green,
+                        //       content: Text('Success' + newUser.id)),
+                        // );
 
-                    Navigator.pushNamed(
-                        context, '/' + IntroductionScreen.routeName);
-                  });
-                }
-              },
-              child: const Text('Submit'),
-            ),
+                        Navigator.pushNamed(
+                            context, '/' + IntroductionScreen.routeName);
+                      });
+                    }
+                  },
+                  child: const Text('Submit', style: TextStyle(fontSize: 20)),
+                )),
           ),
         ],
       ),

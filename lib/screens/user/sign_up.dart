@@ -24,6 +24,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [Text('Get Started'), SignUpForm()])));
+                children: const [
+                  Text(
+                    "Sign up",
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SignUpForm()
+                ])));
   }
 }

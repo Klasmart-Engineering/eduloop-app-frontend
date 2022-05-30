@@ -24,6 +24,16 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [Text('Hi there!'), LoginForm()])));
+                children: const [
+                  Text(
+                    "Login",
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
+                  ),
+                  LoginForm()
+                ])));
   }
 }

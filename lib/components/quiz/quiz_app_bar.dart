@@ -39,23 +39,23 @@ class QuizAppBar extends HookConsumerWidget {
             ))),
             OutlinedButton.icon(
                 label: Text(data.quiz.earnedScore.toString(),
-                    style: const TextStyle(color: Colors.white)),
+                    style: const TextStyle(color: Colors.black, fontSize: 20)),
                 icon: const Icon(
                   Icons.star,
-                  color: Colors.white,
+                  color: Color(0xFFFFD335),
                 ),
                 onPressed: () => {},
                 style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.white),
+                    padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 15)),
                     textStyle: MaterialStateProperty.all(
                         const TextStyle(fontWeight: FontWeight.bold)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(36.0),
-                    )),
-                    side: MaterialStateProperty.all(const BorderSide(
-                        color: Colors.white,
-                        width: 1.0,
-                        style: BorderStyle.solid))))
+                    ))))
           ],
         ));
   }

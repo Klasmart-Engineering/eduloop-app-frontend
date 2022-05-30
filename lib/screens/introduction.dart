@@ -45,12 +45,21 @@ class HeadingSection extends StatelessWidget {
               ),
             ),
           ),
-          ElevatedButton(
-            child: const Text('Open route'),
-            onPressed: () {
-              Navigator.pushNamed(context, '/' + QuizScreen.routeName);
-            },
-          ),
+          Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: SizedBox(
+                  width: double.maxFinite,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 25))),
+                    child:
+                        const Text('Lets go!', style: TextStyle(fontSize: 20)),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/' + QuizScreen.routeName);
+                    },
+                  ))),
         ],
       ),
     );
