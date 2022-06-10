@@ -1,8 +1,6 @@
 import 'package:edu_app/components/quiz/quiz_app_bar.dart';
 import 'package:edu_app/components/quiz/quiz_carousel.dart';
-import 'package:edu_app/models/question_status.dart';
-import 'package:edu_app/models/quiz.dart';
-import 'package:edu_app/providers/riverpod/quiz_data.dart';
+import 'package:edu_app/providers/quiz_manager_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -13,28 +11,24 @@ class QuizScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(quizDataProvider).when(
-        data: (QuizData quizData) {
-          return Scaffold(
-              body: Column(children: [
-            const QuizAppBar(),
-            QuizCarousel(
-              initialQuestionNumber: quizData.initialQuestionNumber,
-              totalNumberOfQuestions: quizData.quiz.totalNumberOfQuestions,
-            )
-          ]));
-        },
-        error: (err, stack) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
-            body: Center(
-              child: Text('$err'),
-            ),
-          );
-        },
-        loading: () => Container(
-              color: Colors.white,
-              child: const Center(child: CircularProgressIndicator()),
-            ));
+    final AsyncValue<QuizManager> _quizManager = ref.watch(quizManagerProvider);
+
+    return Scaffold(
+        body: _quizManager.when(
+            data: (QuizManager quizManager) {
+              return Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const QuizAppBar(),
+                    Expanded(
+                        child: QuizCarousel(
+                      initialQuestionNumber: quizManager.initialQuestionNumber,
+                      totalNumberOfQuestions:
+                          quizManager.state.totalNumberOfQuestions,
+                    )),
+                  ]);
+            },
+            error: (err, stack) => Center(child: Text('$err')),
+            loading: () => const Center(child: CircularProgressIndicator())));
   }
 }

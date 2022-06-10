@@ -89,6 +89,7 @@ class QuestionOptionsState extends State<QuestionOptions> {
         mainAxisSpacing: 20,
         crossAxisSpacing: 20,
         childAspectRatio: 4 / 2,
+        shrinkWrap: true,
         children: widget.items.map((item) {
           bool wasLastPressed = lastOptionChosen == item.clientId;
           bool isActive =

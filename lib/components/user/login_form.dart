@@ -4,9 +4,9 @@ import 'dart:ui';
 import 'package:edu_app/models/user.dart';
 import 'package:edu_app/screens/introduction.dart';
 import 'package:edu_app/screens/user/sign_up.dart';
-import 'package:edu_app/utils/session_helper.dart';
+import 'package:edu_app/services/session_service.dart';
 import 'package:flutter/material.dart';
-import 'package:edu_app/utils/user_helper.dart';
+import 'package:edu_app/services/user_service.dart';
 
 // Define a custom Form widget.
 class LoginForm extends StatefulWidget {
@@ -43,7 +43,7 @@ class LoginFormState extends State<LoginForm> {
   }
 
   Future<List<DropdownMenuItem<String>>> initiateDropdownValues() async {
-    List<User> users = await UserHelper.getUsers();
+    List<User> users = await UserService.getUsers();
     List<DropdownMenuItem<String>> options = users
         .map((user) => DropdownMenuItem(child: Text(user.name), value: user.id))
         .toList();
@@ -105,7 +105,7 @@ class LoginFormState extends State<LoginForm> {
                           onPressed: () {
                             // Validate returns true if the form is valid, or false otherwise.
                             if (_formKey.currentState!.validate()) {
-                              SessionHelper.startSession(selectedUserId)
+                              SessionService.startSession(selectedUserId)
                                   .then((value) {
                                 Navigator.pushNamed(context,
                                     '/' + IntroductionScreen.routeName);

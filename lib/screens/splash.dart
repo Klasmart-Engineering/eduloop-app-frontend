@@ -1,5 +1,5 @@
 import 'package:edu_app/models/user.dart';
-import 'package:edu_app/utils/user_helper.dart';
+import 'package:edu_app/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_app/screens/user/login.dart';
 import 'package:edu_app/screens/user/sign_up.dart';
@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void determineLoginPath(BuildContext context) async {
-    List<User> users = await UserHelper.getUsers();
+    List<User> users = await UserService.getUsers();
     if (users.isEmpty) {
       Navigator.pushNamed(context, '/' + SignUpScreen.routeName);
       return;

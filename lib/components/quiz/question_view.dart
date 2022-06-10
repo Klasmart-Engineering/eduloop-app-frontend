@@ -37,60 +37,54 @@ class QuestionViewState extends State<QuestionView> {
     return Container(
         width: MediaQuery.of(context).size.width,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            const SizedBox(
-              height: 30,
-            ),
             Container(
-              width: MediaQuery.of(context).size.width - 20,
-              height: 250,
               margin: const EdgeInsets.only(top: 5, bottom: 5),
-              decoration: const BoxDecoration(color: Colors.orange),
-              child: Image(
-                fit: BoxFit.fill,
-                image: NetworkImage(widget.question.assetUrl),
-              ),
+              child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(widget.question.assetUrl),
+                  )),
             ),
-            Flexible(
-                flex: 1,
-                fit: FlexFit.tight,
+            Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(children: [
-                    Text(
-                      widget.question.type,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w500,
-                      ),
+              height: double.maxFinite,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      children: [
+                        Text(
+                          widget.question.type,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          widget.question.title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black.withOpacity(0.8),
+                          ),
+                        )
+                      ],
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      widget.question.title,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black.withOpacity(0.8),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(
-                        child: SizedBox(
-                            height: 100,
-                            child: QuestionOptions(
-                              questionStatus: widget.question.status,
-                              chosenAnswerIndex:
-                                  widget.question.chosenAnswerIndex,
-                              items: widget.question.answers,
-                              onAnswerSelection: widget.onAnswerSelection,
-                            ))),
+                    SizedBox(
+                        child: QuestionOptions(
+                      questionStatus: widget.question.status,
+                      chosenAnswerIndex: widget.question.chosenAnswerIndex,
+                      items: widget.question.answers,
+                      onAnswerSelection: widget.onAnswerSelection,
+                    )),
                   ]),
-                )),
+            )),
           ],
         ));
   }

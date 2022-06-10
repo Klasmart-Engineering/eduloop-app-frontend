@@ -1,16 +1,18 @@
 // https://stackoverflow.com/questions/53931513/store-data-as-an-object-in-shared-preferences-in-flutter
-import 'package:edu_app/models/quiz.dart';
-import 'package:edu_app/models/session.dart';
-import 'package:flutter/material.dart';
+import 'package:edu_app/api/models/base_response.dart';
+import 'package:edu_app/models/quiz_state.dart';
 
-class PreviousQuestionResponse {
+class PreviousQuestionResponse extends BaseResponse {
   final QuizStateModel quiz;
 
-  PreviousQuestionResponse({required this.quiz});
+  PreviousQuestionResponse({required this.quiz, required successful, errmsg})
+      : super(successful: successful, errmsg: errmsg);
 
   factory PreviousQuestionResponse.fromApiJson(Map<String, dynamic> json) {
     return PreviousQuestionResponse(
       quiz: QuizStateModel.fromApiJson(json),
+      successful: json['successful'],
+      errmsg: json['errmsg'],
     );
   }
 }

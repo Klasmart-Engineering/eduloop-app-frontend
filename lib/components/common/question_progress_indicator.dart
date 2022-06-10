@@ -36,7 +36,7 @@ class _QuestionProgressIndicatorState extends State<QuestionProgressIndicator>
 
   @override
   Widget build(BuildContext context) {
-    int progress = widget.currentQuestion - 1;
+    int progress = widget.currentQuestion;
     controller.value = progress / widget.totalQuestions;
 
     return CircularProgressIndicator(

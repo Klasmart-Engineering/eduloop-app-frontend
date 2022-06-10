@@ -1,5 +1,5 @@
 import 'package:edu_app/components/common/question_progress_indicator.dart';
-import 'package:edu_app/providers/riverpod/quiz_data.dart';
+import 'package:edu_app/providers/quiz_manager_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -8,15 +8,15 @@ class QuizAppBar extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final quizListener = ref.watch(quizDataProvider);
+    final quizListener = ref.watch(quizManagerProvider);
 
     if (quizListener is AsyncLoading) {
       return const Text('loading');
     }
 
-    final data = quizListener.value;
+    final quiz = quizListener.value;
 
-    if (data == null) {
+    if (quiz == null) {
       return const Text('no data');
     }
 
@@ -31,14 +31,14 @@ class QuizAppBar extends HookConsumerWidget {
                 child: Center(
                     child: SizedBox(
               child: QuestionProgressIndicator(
-                currentQuestion: data.quiz.currentQuestionNumber,
-                totalQuestions: data.quiz.totalNumberOfQuestions,
+                currentQuestion: quiz.state.currentQuestionNumber,
+                totalQuestions: quiz.state.totalNumberOfQuestions,
               ),
               height: 50,
               width: 50,
             ))),
             OutlinedButton.icon(
-                label: Text(data.quiz.earnedScore.toString(),
+                label: Text(quiz.state.earnedScore.toString(),
                     style: const TextStyle(color: Colors.black, fontSize: 20)),
                 icon: const Icon(
                   Icons.star,

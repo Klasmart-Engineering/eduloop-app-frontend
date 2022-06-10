@@ -1,9 +1,8 @@
 import 'package:edu_app/models/question_status.dart';
-import 'package:edu_app/models/quiz.dart';
-import 'package:edu_app/providers/riverpod/quiz_data.dart';
+import 'package:edu_app/models/quiz_state.dart';
+import 'package:edu_app/providers/quiz_manager_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:provider/provider.dart';
 
 class QuizCarouselNavigationButtons extends HookConsumerWidget {
   const QuizCarouselNavigationButtons(
@@ -30,19 +29,19 @@ class QuizCarouselNavigationButtons extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final quizListener = ref.watch(quizDataProvider);
+    final quizListener = ref.watch(quizManagerProvider);
 
     if (quizListener is AsyncLoading) {
       return const Text('loading');
     }
 
-    final data = quizListener.value;
+    final quiz = quizListener.value;
 
-    if (data == null) {
+    if (quiz == null) {
       return const Text('no data');
     }
 
-    final String nextButtonText = determineNextButtonText(data.quiz);
+    final String nextButtonText = determineNextButtonText(quiz.state);
 
     return Container(
         padding: const EdgeInsets.all(16.0),

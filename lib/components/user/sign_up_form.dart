@@ -1,7 +1,7 @@
 import 'package:edu_app/screens/introduction.dart';
-import 'package:edu_app/utils/session_helper.dart';
+import 'package:edu_app/services/session_service.dart';
 import 'package:flutter/material.dart';
-import 'package:edu_app/utils/user_helper.dart';
+import 'package:edu_app/services/user_service.dart';
 
 import '../../models/user.dart';
 
@@ -75,10 +75,10 @@ class SignUpFormState extends State<SignUpForm> {
                       //   const SnackBar(content: Text('Processing Data:')),
                       // );
 
-                      User newUser =
-                          await UserHelper.addNewUser(_nicknameController.text);
+                      User newUser = await UserService.addNewUser(
+                          _nicknameController.text);
 
-                      SessionHelper.startSession(newUser.id).then((value) {
+                      SessionService.startSession(newUser.id).then((value) {
                         // ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
                         // ScaffoldMessenger.of(context).showSnackBar(
