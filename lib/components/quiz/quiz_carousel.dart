@@ -44,6 +44,7 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
       };
       initialQuestionNumber = session.quiz.currentQuestionNumber;
       totalNumberOfQuestions = session.quiz.totalNumberOfQuestions;
+      enableButtons = true;
     });
   }
 

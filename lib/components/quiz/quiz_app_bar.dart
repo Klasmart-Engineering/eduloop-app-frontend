@@ -1,5 +1,4 @@
 import 'package:edu_app/components/common/question_progress_indicator.dart';
-import 'package:edu_app/providers/quiz_manager_provider.dart';
 import 'package:edu_app/providers/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

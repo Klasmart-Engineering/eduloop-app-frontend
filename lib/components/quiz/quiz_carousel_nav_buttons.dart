@@ -53,27 +53,6 @@ class QuizCarouselNavigationButtons extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: [
-            ThemedButton(label: 'Back', onPressed: () => {}),
-            ThemedButton(
-                label: 'corner',
-                onPressed: () => {},
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft:
-                          Radius.circular(SizeConstants.elevatedButtonRadius),
-                      topRight:
-                          Radius.circular(SizeConstants.elevatedButtonRadius),
-                      bottomLeft:
-                          Radius.circular(SizeConstants.elevatedButtonRadius),
-                      bottomRight: Radius.zero),
-                )))),
-            ThemedButton(
-              label: 'Disabled',
-              onPressed: () => {},
-              isActive: false,
-            ),
             ElevatedButton.icon(
               style: ButtonStyle(
                   padding: MaterialStateProperty.all(
