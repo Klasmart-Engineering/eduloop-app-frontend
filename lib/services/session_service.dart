@@ -12,7 +12,7 @@ class SessionService {
   static Future<StartSessionResponse> startSession(String userId) async {
     StartSessionResponse response = await EduloopApi.startSession(userId);
 
-    String sessionJson = jsonEncode(response.session);
+    String sessionJson = jsonEncode(response.quizSession.session);
 
     LocalStorageService.store(keyCurrentSession, sessionJson);
     return response;

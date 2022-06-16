@@ -61,15 +61,23 @@ class QuestionOptionsState extends State<QuestionOptions> {
       return isCorrect ? Colors.green : Colors.red;
     }
 
-    return Theme.of(context).colorScheme.secondary;
+    if (states.contains(MaterialState.disabled) && !isCorrect) {
+      return Theme.of(context).colorScheme.tertiary.withOpacity(.5);
+    }
+
+    return Theme.of(context).colorScheme.tertiary;
   }
 
-  Color getButtonTextColor(bool isActive) {
+  Color getButtonTextColor(bool disabled, bool isActive, bool isCorrect) {
     if (isActive) {
       return Colors.white;
     }
 
-    return Theme.of(context).colorScheme.onSecondary;
+    if (disabled && !isCorrect) {
+      return Theme.of(context).colorScheme.onTertiary.withOpacity(.5);
+    }
+
+    return Theme.of(context).colorScheme.onTertiary;
   }
 
   Color getButtonBorderColor(
@@ -83,6 +91,9 @@ class QuestionOptionsState extends State<QuestionOptions> {
 
   @override
   Widget build(BuildContext context) {
+    bool isNewQuestion = widget.questionStatus == QuestionStatus.fresh;
+    bool buttonDisabled = !isNewQuestion || lastOptionChosen != "";
+
     return GridView.count(
         primary: false,
         crossAxisCount: 2,
@@ -94,7 +105,6 @@ class QuestionOptionsState extends State<QuestionOptions> {
           bool wasLastPressed = lastOptionChosen == item.clientId;
           bool isActive =
               wasLastPressed || item.answerIndex == widget.chosenAnswerIndex;
-
           return ElevatedButton(
             style: ButtonStyle(
                 shape: MaterialStateProperty.resolveWith(
@@ -109,8 +119,10 @@ class QuestionOptionsState extends State<QuestionOptions> {
                     getButtonBackgroundColor(
                         states, isActive, item.isCorrect))),
             child: Text(item.label,
-                style: TextStyle(color: getButtonTextColor(isActive))),
-            onPressed: widget.questionStatus != QuestionStatus.fresh
+                style: TextStyle(
+                    color: getButtonTextColor(
+                        buttonDisabled, isActive, item.isCorrect))),
+            onPressed: buttonDisabled
                 ? null
                 : () {
                     handleOptionButtonPress(

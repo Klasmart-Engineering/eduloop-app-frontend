@@ -7,11 +7,13 @@ class QuestionView extends AppBar {
   QuestionView({
     required this.question,
     required this.onAnswerSelection,
+    required this.enableButtons,
     Key? key,
   }) : super(key: key);
 
   final QuestionModel question;
   final void Function(int index, bool isCorrect) onAnswerSelection;
+  final bool enableButtons;
 
   @override
   QuestionViewState createState() {
@@ -52,38 +54,39 @@ class QuestionViewState extends State<QuestionView> {
                 child: Container(
               height: double.maxFinite,
               padding: const EdgeInsets.all(20),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        Text(
-                          widget.question.type,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        Text(
-                          widget.question.title,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black.withOpacity(0.8),
-                          ),
-                        )
-                      ],
+                    Text(
+                      widget.question.type,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
-                    SizedBox(
-                        child: QuestionOptions(
-                      questionStatus: widget.question.status,
-                      chosenAnswerIndex: widget.question.chosenAnswerIndex,
-                      items: widget.question.answers,
-                      onAnswerSelection: widget.onAnswerSelection,
-                    )),
-                  ]),
+                    const SizedBox(height: 5),
+                    Text(
+                      widget.question.title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black.withOpacity(0.8),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                    child: QuestionOptions(
+                  questionStatus: widget.question.status,
+                  chosenAnswerIndex: widget.question.chosenAnswerIndex,
+                  items: widget.question.answers,
+                  onAnswerSelection: widget.onAnswerSelection,
+                )),
+              ]),
             )),
           ],
         ));

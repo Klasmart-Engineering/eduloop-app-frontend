@@ -1,5 +1,6 @@
 import 'package:edu_app/components/common/question_progress_indicator.dart';
 import 'package:edu_app/providers/quiz_manager_provider.dart';
+import 'package:edu_app/providers/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -8,21 +9,20 @@ class QuizAppBar extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final quizListener = ref.watch(quizManagerProvider);
+    final quizSessionListener = ref.watch(quizSessionProvider);
 
-    if (quizListener is AsyncLoading) {
+    if (quizSessionListener is AsyncLoading) {
       return const Text('loading');
     }
 
-    final quiz = quizListener.value;
+    final quizSession = quizSessionListener.value;
 
-    if (quiz == null) {
+    if (quizSession == null) {
       return const Text('no data');
     }
 
     return Padding(
-        padding:
-            const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 10),
+        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -31,14 +31,14 @@ class QuizAppBar extends HookConsumerWidget {
                 child: Center(
                     child: SizedBox(
               child: QuestionProgressIndicator(
-                currentQuestion: quiz.state.currentQuestionNumber,
-                totalQuestions: quiz.state.totalNumberOfQuestions,
+                currentQuestion: quizSession.quiz.currentQuestionNumber,
+                totalQuestions: quizSession.quiz.totalNumberOfQuestions,
               ),
               height: 50,
               width: 50,
             ))),
             OutlinedButton.icon(
-                label: Text(quiz.state.earnedScore.toString(),
+                label: Text(quizSession.quiz.earnedScore.toString(),
                     style: const TextStyle(color: Colors.black, fontSize: 20)),
                 icon: const Icon(
                   Icons.star,

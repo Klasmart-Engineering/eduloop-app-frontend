@@ -55,9 +55,10 @@ class EduloopApi {
   }
 
   static Future<PreviousQuestionResponse> fetchPreviousQuestion(
-      String sessionId) async {
+      String sessionId, String userId) async {
     final response = await baseApiPost(ApiActionType.previousQuestion, {
       'sid': sessionId,
+      'uid': userId,
     });
 
     return PreviousQuestionResponse.fromApiJson(jsonDecode(response.body));
@@ -65,6 +66,7 @@ class EduloopApi {
 
   static Future<ValidateQuestionAnswerResponse> validateQuestionAnswer(
       String sessionId,
+      String userId,
       String questionId,
       QuestionStatus status,
       int questionSentUTC,
@@ -75,6 +77,7 @@ class EduloopApi {
     final response = await baseApiPost(ApiActionType.validateQuestionResponse, {
       'sid': sessionId,
       'qid': questionId,
+      'uid': userId,
       'status': status.string,
       'answer_idx': answerIndex,
       'question_sent_utc': null,

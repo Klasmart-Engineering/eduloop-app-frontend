@@ -2,21 +2,19 @@
 import 'dart:math';
 
 import 'package:edu_app/api/models/base_response.dart';
+import 'package:edu_app/models/quiz_session.dart';
 import 'package:edu_app/models/quiz_state.dart';
 import 'package:edu_app/models/session.dart';
 
 class StartSessionResponse extends BaseResponse {
-  final SessionModel session;
-  final QuizStateModel quiz;
+  final QuizSessionModel quizSession;
 
-  StartSessionResponse(
-      {required this.session, required this.quiz, required successful, errmsg})
+  StartSessionResponse({required this.quizSession, required successful, errmsg})
       : super(successful: successful, errmsg: errmsg);
 
   factory StartSessionResponse.fromApiJson(Map<String, dynamic> json) {
     return StartSessionResponse(
-      session: SessionModel.fromApiJson(json),
-      quiz: QuizStateModel.fromApiJson(json),
+      quizSession: QuizSessionModel.fromApiJson(json),
       successful: json['successful'],
       errmsg: json['errmsg'],
     );

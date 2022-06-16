@@ -2,7 +2,7 @@ import 'package:edu_app/components/quiz/question_view.dart';
 import 'package:edu_app/components/quiz/quiz_carousel_nav_buttons.dart';
 import 'package:edu_app/models/question.dart';
 import 'package:edu_app/models/question_status.dart';
-import 'package:edu_app/providers/quiz_manager_provider.dart';
+import 'package:edu_app/models/quiz_session.dart';
 import 'package:edu_app/providers/session_provider.dart';
 import 'package:edu_app/screens/quiz/results.dart';
 import 'package:flutter/material.dart';
@@ -10,15 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class QuizCarousel extends StatefulHookConsumerWidget {
-  const QuizCarousel(
-      {required this.initialQuestionNumber,
-      required this.totalNumberOfQuestions,
-      Key? key})
-      : super(key: key);
-
-  final int initialQuestionNumber;
-  final int totalNumberOfQuestions;
-
+  const QuizCarousel({Key? key}) : super(key: key);
   @override
   QuizCarouselState createState() => QuizCarouselState();
 }
@@ -26,26 +18,65 @@ class QuizCarousel extends StatefulHookConsumerWidget {
 class QuizCarouselState extends ConsumerState<QuizCarousel> {
   CarouselController buttonCarouselController = CarouselController();
 
+  Map<int, QuestionModel?> questions = {};
+  int? initialQuestionNumber;
+  int? totalNumberOfQuestions;
+
+  bool enableButtons = false;
+
   @override
   void initState() {
     super.initState();
+    //final session = ref.read(quizSessionProvider(null));
+    setInitialQuizCarouselState();
+  }
+
+  Future<void> setInitialQuizCarouselState() async {
+    final session = await ref.read(quizSessionProvider.future);
+
+    if (session == null) {
+      return;
+    }
+
+    setState(() {
+      questions = {
+        session.quiz.currentQuestionNumber: session.quiz.currentQuestion
+      };
+      initialQuestionNumber = session.quiz.currentQuestionNumber;
+      totalNumberOfQuestions = session.quiz.totalNumberOfQuestions;
+    });
+  }
+
+  /// When a button is pressed, we wait for api response so disable other actions in meantime
+  void toggleButtons(bool enabled) {
+    setState(() {
+      enableButtons = enabled;
+    });
   }
 
   void previousPage() {
     buttonCarouselController.previousPage(
         duration: const Duration(milliseconds: 300), curve: Curves.linear);
+
+    toggleButtons(true);
   }
 
   Future<void> nextPage() async {
-    final quiz = await ref.read(quizManagerProvider.future);
+    final quizSession = await ref.read(quizSessionProvider.future);
 
-    if (!quiz.state.hasNextQuestion) {
+    if (quizSession == null) {
+      return;
+    }
+
+    if (!quizSession.quiz.hasNextQuestion) {
       completeQuiz();
       return;
     }
 
     buttonCarouselController.nextPage(
         duration: const Duration(milliseconds: 300), curve: Curves.linear);
+
+    toggleButtons(true);
   }
 
   void onCorrectAnswer() {
@@ -62,11 +93,12 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
   }
 
   void onAnswerSelection(int answerIndex, bool isCorrect) async {
+    toggleButtons(false);
     QuestionStatus status =
         isCorrect ? QuestionStatus.successful : QuestionStatus.failed;
 
     await ref
-        .read(quizManagerProvider.notifier)
+        .read(quizSessionProvider.notifier)
         .validateQuestionAnswer(answerIndex, status);
 
     if (isCorrect) {
@@ -77,29 +109,51 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
   }
 
   Future<void> goToPreviousQuestion() async {
-    await ref.read(quizManagerProvider.notifier).goToPreviousQuestion();
+    toggleButtons(false);
+    await ref.read(quizSessionProvider.notifier).goToPreviousQuestion();
     previousPage();
   }
 
   Future<void> onSkip() async {
-    await ref.read(quizManagerProvider.notifier).skipQuestion();
+    toggleButtons(false);
+    await ref.read(quizSessionProvider.notifier).skipQuestion();
     nextPage();
   }
 
   void completeQuiz() async {
-    final quiz = await ref.read(quizManagerProvider.future);
     final session = await ref.read(quizSessionProvider.future);
+
+    if (session == null) {
+      return;
+    }
+
     await ref.read(quizSessionProvider.notifier).closeSession();
+
     Navigator.pushNamed(context, '/' + QuizResultsScreen.routeName,
-        arguments: QuizResultsScreenArguments(quiz.state.earnedScore,
-            quiz.state.totalNumberOfQuestions, session.userId));
+        arguments: QuizResultsScreenArguments(session.quiz.earnedScore,
+            session.quiz.totalNumberOfQuestions, session.session.userId));
   }
 
   @override
   Widget build(BuildContext context) {
-    final quizListener = ref.watch(quizManagerProvider);
+    ref.listen<Future<QuizSessionModel?>>(quizSessionProvider.future,
+        (Future<QuizSessionModel?>? prevQuizSession,
+            Future<QuizSessionModel?> newQuizSession) {
+      newQuizSession.then((session) {
+        if (session == null) {
+          return;
+        }
 
-    if (quizListener is AsyncLoading) {
+        setState(() {
+          questions = {
+            ...questions,
+            session.quiz.currentQuestionNumber: session.quiz.currentQuestion
+          };
+        });
+      });
+    });
+
+    if (initialQuestionNumber == null) {
       return const Text('loading');
     }
 
@@ -111,21 +165,15 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
             options: CarouselOptions(
                 viewportFraction: 1,
                 enlargeCenterPage: true,
-                initialPage: widget.initialQuestionNumber,
+                initialPage: initialQuestionNumber as int,
                 aspectRatio: 1 / 1.4,
                 enableInfiniteScroll: false),
-            itemCount: widget.totalNumberOfQuestions,
+            itemCount: totalNumberOfQuestions,
             itemBuilder:
                 (BuildContext context, int itemIndex, int pageViewIndex) {
-              final quiz = quizListener.value;
-
-              if (quiz == null) {
-                return const Text('no data');
-              }
-
-              bool questionExists = quiz.questions.containsKey(pageViewIndex);
+              bool questionExists = questions.containsKey(pageViewIndex);
               QuestionModel? currentQuestion =
-                  questionExists ? quiz.questions[pageViewIndex] : null;
+                  questionExists ? questions[pageViewIndex] : null;
 
               if (currentQuestion == null) {
                 return const Center(child: CircularProgressIndicator());
@@ -136,6 +184,7 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
                   return QuestionView(
                     question: currentQuestion,
                     onAnswerSelection: onAnswerSelection,
+                    enableButtons: enableButtons,
                   );
                 },
               );
@@ -144,6 +193,7 @@ class QuizCarouselState extends ConsumerState<QuizCarousel> {
       QuizCarouselNavigationButtons(
         nextPageTapHandler: onSkip,
         previousPageTapHandler: goToPreviousQuestion,
+        enableButtons: enableButtons,
       )
     ]);
   }

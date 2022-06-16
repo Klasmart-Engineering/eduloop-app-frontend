@@ -11,18 +11,16 @@ class SessionModel {
   SessionModel(
       {required this.id, required this.userId, required this.newSession});
 
-  factory SessionModel.fromApiJson(Map<String, dynamic> parsedJson) {
+  factory SessionModel.fromApiJson(Map<String, dynamic> json) {
     return SessionModel(
-        id: parsedJson['sid'],
-        userId: parsedJson['uid'],
-        newSession: parsedJson['new_session']);
+        id: json['sid'],
+        userId: json['uid'] ?? '',
+        newSession: json['new_session'] ?? false);
   }
 
-  factory SessionModel.fromJson(Map<String, dynamic> parsedJson) {
+  factory SessionModel.fromJson(Map<String, dynamic> json) {
     return SessionModel(
-        id: parsedJson['id'],
-        userId: parsedJson['userId'],
-        newSession: parsedJson['newSession']);
+        id: json['id'], userId: json['userId'], newSession: json['newSession']);
   }
 
   Map<String, dynamic> toJson() {

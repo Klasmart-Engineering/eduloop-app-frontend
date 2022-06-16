@@ -1,12 +1,14 @@
+import 'package:edu_app/providers/session_provider.dart';
 import 'package:edu_app/screens/introduction.dart';
 import 'package:edu_app/services/session_service.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_app/services/user_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../models/user.dart';
 
 // Define a custom Form widget.
-class SignUpForm extends StatefulWidget {
+class SignUpForm extends StatefulHookConsumerWidget {
   const SignUpForm({Key? key}) : super(key: key);
 
   @override
@@ -17,7 +19,7 @@ class SignUpForm extends StatefulWidget {
 
 // Define a corresponding State class.
 // This class holds data related to the form.
-class SignUpFormState extends State<SignUpForm> {
+class SignUpFormState extends ConsumerState<SignUpForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
@@ -78,15 +80,13 @@ class SignUpFormState extends State<SignUpForm> {
                       User newUser = await UserService.addNewUser(
                           _nicknameController.text);
 
-                      SessionService.startSession(newUser.id).then((value) {
-                        // ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   SnackBar(
-                        //       backgroundColor: Colors.green,
-                        //       content: Text('Success' + newUser.id)),
-                        // );
-
+                      ref
+                          .watch(quizSessionProvider.notifier)
+                          .startSession(newUser.id)
+                          .then((value) {
+                        if (value != null) {
+                          print('new session in sign up: ${value.session.id}');
+                        }
                         Navigator.pushNamed(
                             context, '/' + IntroductionScreen.routeName);
                       });

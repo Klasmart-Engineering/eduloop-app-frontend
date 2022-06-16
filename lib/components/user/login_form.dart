@@ -1,15 +1,14 @@
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:edu_app/models/user.dart';
+import 'package:edu_app/providers/session_provider.dart';
 import 'package:edu_app/screens/introduction.dart';
 import 'package:edu_app/screens/user/sign_up.dart';
 import 'package:edu_app/services/session_service.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_app/services/user_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Define a custom Form widget.
-class LoginForm extends StatefulWidget {
+class LoginForm extends StatefulHookConsumerWidget {
   const LoginForm({Key? key}) : super(key: key);
 
   @override
@@ -20,7 +19,7 @@ class LoginForm extends StatefulWidget {
 
 // Define a corresponding State class.
 // This class holds data related to the form.
-class LoginFormState extends State<LoginForm> {
+class LoginFormState extends ConsumerState<LoginForm> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
@@ -105,7 +104,9 @@ class LoginFormState extends State<LoginForm> {
                           onPressed: () {
                             // Validate returns true if the form is valid, or false otherwise.
                             if (_formKey.currentState!.validate()) {
-                              SessionService.startSession(selectedUserId)
+                              ref
+                                  .watch(quizSessionProvider.notifier)
+                                  .startSession(selectedUserId)
                                   .then((value) {
                                 Navigator.pushNamed(context,
                                     '/' + IntroductionScreen.routeName);

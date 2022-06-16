@@ -1,7 +1,9 @@
+import 'package:edu_app/providers/session_provider.dart';
 import 'package:edu_app/screens/introduction.dart';
 import 'package:edu_app/screens/user/login.dart';
 import 'package:edu_app/services/session_service.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class QuizResultsScreenArguments {
   final int score;
@@ -12,16 +14,16 @@ class QuizResultsScreenArguments {
   QuizResultsScreenArguments(this.score, this.maxScore, this.uid);
 }
 
-class QuizResultsScreen extends StatefulWidget {
+class QuizResultsScreen extends StatefulHookConsumerWidget {
   const QuizResultsScreen({Key? key}) : super(key: key);
 
   static const routeName = 'quiz-results';
 
   @override
-  State<QuizResultsScreen> createState() => _QuizResultsScreenState();
+  QuizResultsScreenState createState() => QuizResultsScreenState();
 }
 
-class _QuizResultsScreenState extends State<QuizResultsScreen> {
+class QuizResultsScreenState extends ConsumerState<QuizResultsScreen> {
   int? score;
   int? maxScore;
   String? uid;
@@ -52,6 +54,8 @@ class _QuizResultsScreenState extends State<QuizResultsScreen> {
   Widget build(BuildContext context) {
     if (uid == null || score == null) return const Text('Loading');
 
+    print('uid in results screen: $uid');
+
     return Scaffold(
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,13 +77,15 @@ class _QuizResultsScreenState extends State<QuizResultsScreen> {
   }
 }
 
-class HeadingSection extends StatelessWidget {
+class HeadingSection extends HookConsumerWidget {
   const HeadingSection({Key? key, required this.userId}) : super(key: key);
 
   final String? userId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    print('user od in heading screen: $userId');
+
     return Container(
         padding: const EdgeInsets.all(32),
         child: Column(
@@ -118,8 +124,14 @@ class HeadingSection extends StatelessWidget {
                         child: const Text('Lets start again!',
                             style: TextStyle(fontSize: 20)),
                         onPressed: () {
-                          SessionService.startSession(userId as String)
+                          ref
+                              .watch(quizSessionProvider.notifier)
+                              .startSession(userId as String)
                               .then((value) {
+                            if (value != null) {
+                              print(
+                                  'new session in results -: ${value.session.id}');
+                            }
                             Navigator.pushNamed(
                                 context, '/' + IntroductionScreen.routeName);
                           });
