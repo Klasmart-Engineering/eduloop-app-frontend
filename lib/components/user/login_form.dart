@@ -93,7 +93,7 @@ class LoginFormState extends ConsumerState<LoginForm> {
                         },
                       )),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 30.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: SizedBox(
                         width: double.maxFinite,
                         child: ElevatedButton(

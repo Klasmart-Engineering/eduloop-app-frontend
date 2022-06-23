@@ -4,6 +4,7 @@
 
 import 'package:edu_app/screens/quiz/quiz.dart';
 import 'package:edu_app/screens/quiz/results.dart';
+import 'package:edu_app/screens/quiz/mock_results_screen.dart';
 import 'package:edu_app/theme/custom_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:edu_app/screens/splash.dart';
@@ -29,10 +30,11 @@ class MyApp extends StatelessWidget {
         initialRoute: '/splash',
         routes: {
           '/introduction': (context) => const IntroductionScreen(),
+          '/mock-screen': (context) => const MockQuizResultsScreen(),
           '/sign-up': (context) => const SignUpScreen(),
           '/login': (context) => const LoginScreen(),
           '/splash': (context) => const SplashScreen(),
-          '/quiz': (context) => QuizScreen(),
+          '/quiz': (context) => const QuizScreen(),
           '/quiz-results': (context) => const QuizResultsScreen()
         });
   }

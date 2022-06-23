@@ -46,6 +46,8 @@ class QuizCarouselNavigationButtons extends HookConsumerWidget {
     }
 
     final String nextButtonText = determineNextButtonText(quizSession.quiz);
+    final Radius buttonRadius =
+        Radius.circular(SizeConstants.elevatedButtonRadius);
 
     return Container(
         padding: const EdgeInsets.all(16.0),
@@ -53,45 +55,36 @@ class QuizCarouselNavigationButtons extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: [
-            ElevatedButton.icon(
+            ThemedButton.icon(
+                variant: ButtonVariant.secondary,
+                onPressed: previousPageTapHandler,
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+                isActive: enableButtons,
+                style: ButtonStyle(
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: buttonRadius,
+                      topRight: buttonRadius,
+                      bottomLeft: buttonRadius,
+                      bottomRight: Radius.zero),
+                )))),
+            ThemedButton(
+              onPressed: nextPageTapHandler,
+              isActive: enableButtons,
               style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 25)),
-                  backgroundColor: MaterialStateProperty.all(
-                      Theme.of(context).colorScheme.secondary),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft:
-                            Radius.circular(SizeConstants.elevatedButtonRadius),
-                        topRight:
-                            Radius.circular(SizeConstants.elevatedButtonRadius),
-                        bottomLeft:
-                            Radius.circular(SizeConstants.elevatedButtonRadius),
-                        bottomRight: Radius.zero),
-                  ))),
-              label: const Text(""),
-              icon: Icon(
-                Icons.arrow_back,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-              onPressed: enableButtons ? previousPageTapHandler : null,
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 25)),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(18),
-                      topRight: Radius.circular(18),
-                      bottomLeft: Radius.zero,
-                      bottomRight: Radius.circular(18)),
-                )),
-              ),
-              child: Text(nextButtonText, style: const TextStyle(fontSize: 20)),
-              onPressed: enableButtons ? nextPageTapHandler : null,
+                          borderRadius: BorderRadius.only(
+                topLeft: buttonRadius,
+                topRight: buttonRadius,
+                bottomLeft: Radius.zero,
+                bottomRight: buttonRadius,
+              )))),
+              label: Text(nextButtonText),
             ),
           ],
         ));

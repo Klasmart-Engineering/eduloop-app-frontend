@@ -37,6 +37,9 @@ dependencies:
   uuid: 3.0.6
   flutter_hooks: ^0.18.0
   hooks_riverpod: ^1.0.4
+  confetti: 0.7.0
+  animator: 3.2.0
+  google_fonts: 3.0.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -70,6 +73,10 @@ flutter:
     - .env
     - assets/
     - assets/images/kidsloop_splash.png
+    - assets/images/couch_learning.png
+    - assets/images/cat.png
+    - assets/images/cloud.png
+    - assets/images/dog.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

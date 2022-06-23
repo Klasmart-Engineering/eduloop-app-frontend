@@ -49,7 +49,9 @@ class SignUpFormState extends ConsumerState<SignUpForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text("Nickname", textAlign: TextAlign.start),
           TextFormField(
+            decoration: InputDecoration(isDense: true),
             controller: _nicknameController,
             // The validator receives the text that the user has entered.
             validator: (value) {
@@ -60,7 +62,7 @@ class SignUpFormState extends ConsumerState<SignUpForm> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            padding: const EdgeInsets.only(top: 16.0),
             child: SizedBox(
                 width: double.maxFinite,
                 child: ElevatedButton(
@@ -84,9 +86,6 @@ class SignUpFormState extends ConsumerState<SignUpForm> {
                           .watch(quizSessionProvider.notifier)
                           .startSession(newUser.id)
                           .then((value) {
-                        if (value != null) {
-                          print('new session in sign up: ${value.session.id}');
-                        }
                         Navigator.pushNamed(
                             context, '/' + IntroductionScreen.routeName);
                       });

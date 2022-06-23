@@ -53,7 +53,7 @@ class QuestionViewState extends State<QuestionView> {
             Expanded(
                 child: Container(
               height: double.maxFinite,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child:
                   Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                 Column(
@@ -81,6 +81,7 @@ class QuestionViewState extends State<QuestionView> {
                 const SizedBox(height: 20),
                 SizedBox(
                     child: QuestionOptions(
+                  enableButtons: widget.enableButtons,
                   questionStatus: widget.question.status,
                   chosenAnswerIndex: widget.question.chosenAnswerIndex,
                   items: widget.question.answers,
