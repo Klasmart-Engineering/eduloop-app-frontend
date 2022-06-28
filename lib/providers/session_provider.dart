@@ -16,7 +16,6 @@ class QuizSessionNotifier extends StateNotifier<AsyncValue<QuizSessionModel?>> {
 
   void init() async {
     state = const AsyncValue.loading();
-    print('INIT SESSION');
     await AsyncValue.guard(() async {
       return await refetchSession();
     });
@@ -71,7 +70,6 @@ class QuizSessionNotifier extends StateNotifier<AsyncValue<QuizSessionModel?>> {
       String? sessionId = quizSession?.session.id ?? storedSession?.id;
 
       if (userId == null || sessionId == null) {
-        print('error: no session to close');
         throw Exception('no session to close');
       }
 

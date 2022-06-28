@@ -27,13 +27,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        body: Container(
-            child: Column(
-          children: [
-            const Flexible(flex: 1, child: const HeroImage()),
-            const FormContainer()
+        body: Column(
+          children: const [
+            Flexible(flex: 1, child: HeroImage()),
+            FormContainer()
           ],
-        )));
+        ));
   }
 }
 

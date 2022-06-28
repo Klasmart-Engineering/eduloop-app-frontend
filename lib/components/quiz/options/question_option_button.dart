@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'well_done_popup.dart';
 
-class QuestionOptionButton extends StatelessWidget {
+class QuestionOptionButton extends StatefulWidget {
   const QuestionOptionButton(
       {Key? key,
       required this.onPressed,
@@ -15,6 +15,16 @@ class QuestionOptionButton extends StatelessWidget {
   final void Function(AnswerModel answerOption)? onPressed;
   final int? chosenAnswerIndex;
   final AnswerModel answerOption;
+
+  @override
+  QuestionOptionButtonState createState() {
+    return QuestionOptionButtonState();
+  }
+}
+
+class QuestionOptionButtonState extends State<QuestionOptionButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController wellDonePopupAnimationController;
 
   /// Once the button has been pressed, set up styles to display correct and wrong answer
   ButtonStyle displayCorrectAnswer(
@@ -41,41 +51,66 @@ class QuestionOptionButton extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    wellDonePopupAnimationController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 3));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    wellDonePopupAnimationController.dispose();
+  }
+
+  void handleOnPress(AnswerModel optionChosen) {
+    if (optionChosen.isCorrect) {
+      wellDonePopupAnimationController.forward();
+    }
+    widget.onPressed!(optionChosen);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    bool answerHasBeenChosen = chosenAnswerIndex != null;
-    bool chosenAnswer = chosenAnswerIndex == answerOption.answerIndex;
-    bool stayVisiblyActive = chosenAnswer || answerOption.isCorrect;
+    bool answerHasBeenChosen = widget.chosenAnswerIndex != null;
+    bool chosenAnswer =
+        widget.chosenAnswerIndex == widget.answerOption.answerIndex;
+    bool stayVisiblyActive = chosenAnswer || widget.answerOption.isCorrect;
 
     ButtonStyle baseStyle = ButtonStyle(
         padding: MaterialStateProperty.all(
             EdgeInsets.symmetric(vertical: 5, horizontal: 10)));
     ButtonStyle colourStyle = displayCorrectAnswer(
-        answerHasBeenChosen, answerOption.isCorrect, chosenAnswer);
+        answerHasBeenChosen, widget.answerOption.isCorrect, chosenAnswer);
 
     /// We still want the right answer and chosen answer to stay visible state, so we provide a hollow function to them
     Function() clickHandler = answerHasBeenChosen
         ? () {}
         : () {
-            onPressed!(answerOption);
+            handleOnPress(widget.answerOption);
           };
 
-    return Stack(
-        fit: StackFit.expand,
-        alignment: Alignment.topCenter,
-        children: [
-          ThemedButton(
-            variant: ButtonVariant.tertiary,
-            label: Center(
-                child: Text(
-              answerOption.label,
-              textAlign: TextAlign.center,
-              style: TextStyle(overflow: TextOverflow.visible),
-            )),
-            onPressed: clickHandler,
-            style: baseStyle.merge(colourStyle),
-            isActive: !answerHasBeenChosen || stayVisiblyActive,
-          ),
-          // if (answerOption.isCorrect) ...[const WellDonePopup()],
-        ]);
+    return GestureDetector(
+        onTap: clickHandler,
+        child: Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.topCenter,
+            children: [
+              ThemedButton(
+                variant: ButtonVariant.tertiary,
+                label: Center(
+                    child: Text(
+                  widget.answerOption.label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(overflow: TextOverflow.visible),
+                )),
+                onPressed: () => {},
+                style: baseStyle.merge(colourStyle),
+                isActive: !answerHasBeenChosen || stayVisiblyActive,
+              ),
+              if (widget.answerOption.isCorrect) ...[
+                WellDonePopup(animController: wellDonePopupAnimationController)
+              ],
+            ]));
   }
 }
